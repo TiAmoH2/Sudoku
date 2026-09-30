@@ -7,6 +7,8 @@ const GAME_STATE_KEY = 'hexagrid_current_game_v1';
 export const DEFAULT_SETTINGS: GameSettings = {
   symbolSet: 'alpha',
   soundEnabled: true,
+  musicEnabled: false,
+  musicVolume: 0.4,
   highlightMatchingNumbers: true,
   highlightPeers: true,
   highlightErrors: true,

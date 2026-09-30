@@ -23,6 +23,7 @@ import {
   HistoryItem,
 } from './types/sudoku';
 import { sound } from './utils/audio';
+import { backgroundMusic } from './utils/backgroundMusic';
 import {
   loadSavedGame,
   loadSettings,
@@ -84,6 +85,26 @@ export default function App() {
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isVictory, setIsVictory] = useState<boolean>(false);
   const [isNewRecord, setIsNewRecord] = useState<boolean>(false);
+
+  // Background Music sync
+  useEffect(() => {
+    if (settings.musicEnabled) {
+      if (isPaused) {
+        backgroundMusic.pause();
+      } else {
+        backgroundMusic.start(settings.musicVolume);
+        backgroundMusic.setVolume(settings.musicVolume);
+      }
+    } else {
+      backgroundMusic.stop();
+    }
+  }, [settings.musicEnabled, settings.musicVolume, isPaused]);
+
+  useEffect(() => {
+    return () => {
+      backgroundMusic.stop();
+    };
+  }, []);
 
   // Interaction State
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -206,6 +227,16 @@ export default function App() {
     setSettings(updated);
     saveSettings(updated);
   };
+
+  // Toggle Background Music
+  const handleToggleMusic = useCallback(() => {
+    setSettings((prev) => {
+      const nextMusicState = !prev.musicEnabled;
+      const updated = { ...prev, musicEnabled: nextMusicState };
+      saveSettings(updated);
+      return updated;
+    });
+  }, []);
 
   // Perform a cell modification (Value placement or Note toggle)
   const applyCellChange = useCallback(
@@ -591,6 +622,8 @@ export default function App() {
         onOpenStats={() => setIsStatsModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         onOpenCustom={() => setIsCustomModalOpen(true)}
+        musicEnabled={settings.musicEnabled}
+        onToggleMusic={handleToggleMusic}
       />
 
       {/* Main Arena Content */}
@@ -605,6 +638,8 @@ export default function App() {
           onRestart={handleRestart}
           filledCount={filledCount}
           totalCells={TOTAL_CELLS}
+          musicEnabled={settings.musicEnabled}
+          onToggleMusic={handleToggleMusic}
         />
 
         {/* Playfield Area: Grid + Keypad Sidebar */}

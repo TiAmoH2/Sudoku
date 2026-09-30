@@ -1,5 +1,5 @@
 import React from 'react';
-import { HelpCircle, Plus, Settings, Trophy, Upload } from 'lucide-react';
+import { HelpCircle, Music, Plus, Settings, Trophy, Upload, VolumeX } from 'lucide-react';
 import { Difficulty } from '../types/sudoku';
 
 interface HeaderProps {
@@ -10,6 +10,8 @@ interface HeaderProps {
   onOpenStats: () => void;
   onOpenSettings: () => void;
   onOpenCustom: () => void;
+  musicEnabled: boolean;
+  onToggleMusic: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,6 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenStats,
   onOpenSettings,
   onOpenCustom,
+  musicEnabled,
+  onToggleMusic,
 }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
@@ -88,9 +92,26 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Primary Actions */}
         <div className="flex items-center gap-2">
+          {/* Background Music Toggle Button */}
+          <button
+            onClick={onToggleMusic}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+              musicEnabled
+                ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-300 hover:bg-indigo-600/30'
+                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+            title={musicEnabled ? 'Turn Background Music OFF' : 'Turn Background Music ON'}
+            aria-label="Toggle Background Music"
+          >
+            <Music className={`w-3.5 h-3.5 ${musicEnabled ? 'text-indigo-400 animate-pulse' : ''}`} />
+            <span className="hidden sm:inline">
+              {musicEnabled ? 'Music ON' : 'Music OFF'}
+            </span>
+          </button>
+
           <button
             onClick={onOpenSettings}
-            className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors cursor-pointer"
             title="Settings & Symbol Set"
             aria-label="Settings"
           >
@@ -109,3 +130,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+

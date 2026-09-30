@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, Pause, Play, RotateCcw } from 'lucide-react';
+import { AlertCircle, Music, Pause, Play, RotateCcw } from 'lucide-react';
 import { Difficulty } from '../types/sudoku';
 
 interface GameHUDProps {
@@ -11,6 +11,8 @@ interface GameHUDProps {
   onRestart: () => void;
   filledCount: number;
   totalCells: number;
+  musicEnabled: boolean;
+  onToggleMusic: () => void;
 }
 
 export const GameHUD: React.FC<GameHUDProps> = ({
@@ -22,6 +24,8 @@ export const GameHUD: React.FC<GameHUDProps> = ({
   onRestart,
   filledCount,
   totalCells,
+  musicEnabled,
+  onToggleMusic,
 }) => {
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -58,7 +62,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
         </div>
       </div>
 
-      {/* Right zone: Mistakes and Timer */}
+      {/* Right zone: Mistakes, Music & Timer */}
       <div className="flex items-center gap-4 text-xs">
         {/* Mistakes */}
         <div className="flex items-center gap-1 text-slate-300">
@@ -68,6 +72,24 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             {mistakes}
           </span>
         </div>
+
+        <span className="text-slate-600">·</span>
+
+        {/* Background Music Quick Button */}
+        <button
+          onClick={onToggleMusic}
+          className={`p-1.5 rounded-md transition-colors cursor-pointer flex items-center gap-1 ${
+            musicEnabled
+              ? 'text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20'
+              : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
+          }`}
+          title={musicEnabled ? 'Turn Background Music OFF' : 'Turn Background Music ON'}
+        >
+          <Music className={`w-3.5 h-3.5 ${musicEnabled ? 'animate-pulse' : ''}`} />
+          <span className="text-[10px] hidden md:inline">
+            {musicEnabled ? 'Music' : 'Music Off'}
+          </span>
+        </button>
 
         <span className="text-slate-600">·</span>
 
@@ -95,3 +117,4 @@ export const GameHUD: React.FC<GameHUDProps> = ({
     </div>
   );
 };
+

@@ -56,6 +56,8 @@ export interface GameStats {
 export interface GameSettings {
   symbolSet: SymbolSetId;
   soundEnabled: boolean;
+  musicEnabled: boolean;
+  musicVolume: number; // 0 to 1
   highlightMatchingNumbers: boolean;
   highlightPeers: boolean;
   highlightErrors: boolean;

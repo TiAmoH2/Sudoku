@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Settings as SettingsIcon, Volume2, VolumeX, X } from 'lucide-react';
+import { Check, Music, Settings as SettingsIcon, Volume2, VolumeX, X } from 'lucide-react';
 import { GameSettings, SymbolSetId } from '../types/sudoku';
 import { SYMBOL_CONFIGS } from '../utils/symbols';
 
@@ -75,10 +75,51 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Gameplay Assistance Toggles */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
-              Board & Gameplay Preferences
+              Audio & Soundscapes
             </label>
             <div className="space-y-3">
-              {/* Sound */}
+              {/* Background Music Toggle */}
+              <div className="p-3 bg-slate-950/50 border border-slate-800 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Music className={`w-4 h-4 ${settings.musicEnabled ? 'text-indigo-400 animate-pulse' : 'text-slate-500'}`} />
+                    <div>
+                      <div className="font-medium text-white text-xs">Background Music (背景音乐)</div>
+                      <div className="text-[11px] text-slate-400">Warm procedural ambient lofi/zen soundscape for focus</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={settings.musicEnabled}
+                    onChange={(e) => onUpdateSettings({ musicEnabled: e.target.checked })}
+                    className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                  />
+                </div>
+
+                {settings.musicEnabled && (
+                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-4 text-xs">
+                    <span className="text-slate-400 text-[11px]">Music Volume</span>
+                    <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                      <input
+                        type="range"
+                        min="0.05"
+                        max="1"
+                        step="0.05"
+                        value={settings.musicVolume}
+                        onChange={(e) =>
+                          onUpdateSettings({ musicVolume: parseFloat(e.target.value) })
+                        }
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                      />
+                      <span className="font-mono text-[11px] text-slate-300 w-8 text-right">
+                        {Math.round(settings.musicVolume * 100)}%
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sound Effects */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div className="flex items-center gap-3">
                   {settings.soundEnabled ? (
@@ -87,7 +128,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <VolumeX className="w-4 h-4 text-slate-500" />
                   )}
                   <div>
-                    <div className="font-medium text-white text-xs">Audio Sound Effects</div>
+                    <div className="font-medium text-white text-xs">Sound Effects (音效)</div>
                     <div className="text-[11px] text-slate-400">Soft audio chimes on moves, hints, and victory</div>
                   </div>
                 </div>
@@ -98,6 +139,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
                 />
               </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
+              Board & Gameplay Preferences
+            </label>
+            <div className="space-y-3">
 
               {/* Highlight Matching Numbers */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">

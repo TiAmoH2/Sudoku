@@ -1,0 +1,189 @@
+import React from 'react';
+import { Check, Settings as SettingsIcon, Volume2, VolumeX, X } from 'lucide-react';
+import { GameSettings, SymbolSetId } from '../types/sudoku';
+import { SYMBOL_CONFIGS } from '../utils/symbols';
+
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  settings: GameSettings;
+  onUpdateSettings: (newSettings: Partial<GameSettings>) => void;
+}
+
+export const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  settings,
+  onUpdateSettings,
+}) => {
+  if (!isOpen) return null;
+
+  const symbolSets: SymbolSetId[] = ['alpha', 'hex', 'numbers', 'letters'];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+          <div className="flex items-center gap-2.5">
+            <SettingsIcon className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-lg font-bold text-white">Game Settings</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6 overflow-y-auto text-sm">
+          {/* Symbol Sets */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Symbol Notation
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {symbolSets.map((id) => {
+                const conf = SYMBOL_CONFIGS[id];
+                const isSelected = settings.symbolSet === id;
+
+                return (
+                  <button
+                    key={id}
+                    onClick={() => onUpdateSettings({ symbolSet: id })}
+                    className={`flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-sm ring-1 ring-indigo-500'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-semibold text-xs">{conf.name}</span>
+                      {isSelected && <Check className="w-4 h-4 text-indigo-400" />}
+                    </div>
+                    <div className="font-mono text-[11px] text-slate-400 truncate">
+                      {conf.symbols.slice(0, 8).join(' ')} ... {conf.symbols.slice(-3).join(' ')}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Gameplay Assistance Toggles */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
+              Board & Gameplay Preferences
+            </label>
+            <div className="space-y-3">
+              {/* Sound */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div className="flex items-center gap-3">
+                  {settings.soundEnabled ? (
+                    <Volume2 className="w-4 h-4 text-indigo-400" />
+                  ) : (
+                    <VolumeX className="w-4 h-4 text-slate-500" />
+                  )}
+                  <div>
+                    <div className="font-medium text-white text-xs">Audio Sound Effects</div>
+                    <div className="text-[11px] text-slate-400">Soft audio chimes on moves, hints, and victory</div>
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.soundEnabled}
+                  onChange={(e) => onUpdateSettings({ soundEnabled: e.target.checked })}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              {/* Highlight Matching Numbers */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div>
+                  <div className="font-medium text-white text-xs">Highlight Matching Numbers</div>
+                  <div className="text-[11px] text-slate-400">Highlights all cells sharing the selected number</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.highlightMatchingNumbers}
+                  onChange={(e) =>
+                    onUpdateSettings({ highlightMatchingNumbers: e.target.checked })
+                  }
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              {/* Highlight Row / Col / Box Peers */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div>
+                  <div className="font-medium text-white text-xs">Highlight Row, Column & Block</div>
+                  <div className="text-[11px] text-slate-400">Subtly tints peer cells in active row, column, and 4×4 box</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.highlightPeers}
+                  onChange={(e) => onUpdateSettings({ highlightPeers: e.target.checked })}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              {/* Highlight Duplicate Conflicts */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div>
+                  <div className="font-medium text-white text-xs">Conflict Checking</div>
+                  <div className="text-[11px] text-slate-400">Highlight duplicate numbers that violate Sudoku rules</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.highlightErrors}
+                  onChange={(e) => onUpdateSettings({ highlightErrors: e.target.checked })}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              {/* Auto-Remove Notes */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div>
+                  <div className="font-medium text-white text-xs">Auto-Remove Notes</div>
+                  <div className="text-[11px] text-slate-400">Automatically clear notes from peer cells when placing a number</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.autoRemoveNotes}
+                  onChange={(e) => onUpdateSettings({ autoRemoveNotes: e.target.checked })}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              {/* 4x4 Block Shading */}
+              <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div>
+                  <div className="font-medium text-white text-xs">Subtle 4×4 Block Shading</div>
+                  <div className="text-[11px] text-slate-400">Alternating subtle background tint on 4×4 blocks</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.blockShading}
+                  onChange={(e) => onUpdateSettings({ blockShading: e.target.checked })}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 bg-slate-950/60 border-t border-slate-800 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-colors cursor-pointer text-xs"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

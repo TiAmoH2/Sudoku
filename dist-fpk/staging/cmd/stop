@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+if [ -f run.pid ]; then
+  PID=$(cat run.pid)
+  if kill -0 "$PID" 2>/dev/null; then
+    kill "$PID" || true
+    sleep 1
+    if kill -0 "$PID" 2>/dev/null; then
+      kill -9 "$PID" || true
+    fi
+  fi
+  rm -f run.pid
+  echo "HexaGrid Sudoku service stopped."
+else
+  echo "No active run.pid found."
+fi
+exit 0

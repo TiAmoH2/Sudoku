@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+echo "HexaGrid Sudoku installed successfully."
+exit 0

@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, Music, Pause, Play, RotateCcw } from 'lucide-react';
 import { Difficulty } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 
 interface GameHUDProps {
   difficulty: Difficulty;
@@ -13,6 +14,7 @@ interface GameHUDProps {
   totalCells: number;
   musicEnabled: boolean;
   onToggleMusic: () => void;
+  language: Language;
 }
 
 export const GameHUD: React.FC<GameHUDProps> = ({
@@ -26,7 +28,10 @@ export const GameHUD: React.FC<GameHUDProps> = ({
   totalCells,
   musicEnabled,
   onToggleMusic,
+  language,
 }) => {
+  const t = TRANSLATIONS[language];
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -46,16 +51,16 @@ export const GameHUD: React.FC<GameHUDProps> = ({
       {/* Left zone: Difficulty and Progress */}
       <div className="flex items-center gap-4 text-xs">
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400 font-medium">Difficulty:</span>
+          <span className="text-slate-400 font-medium">{t.difficulty}:</span>
           <span className="capitalize font-semibold text-indigo-400">
-            {difficulty}
+            {t[difficulty]}
           </span>
         </div>
 
         <span className="text-slate-600 hidden sm:inline">·</span>
 
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-medium">Progress:</span>
+          <span className="text-slate-400 font-medium">{t.progress}:</span>
           <span className="font-mono tabular-nums text-slate-200">
             {filledCount}/{totalCells} ({progressPercent}%)
           </span>
@@ -67,7 +72,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
         {/* Mistakes */}
         <div className="flex items-center gap-1 text-slate-300">
           <AlertCircle className={`w-3.5 h-3.5 ${mistakes > 0 ? 'text-amber-400' : 'text-slate-500'}`} />
-          <span className="text-slate-400">Mistakes:</span>
+          <span className="text-slate-400">{t.mistakes}:</span>
           <span className={`font-mono font-semibold ${mistakes > 0 ? 'text-amber-400' : 'text-slate-300'}`}>
             {mistakes}
           </span>
@@ -83,11 +88,11 @@ export const GameHUD: React.FC<GameHUDProps> = ({
               ? 'text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20'
               : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
           }`}
-          title={musicEnabled ? 'Turn Background Music OFF' : 'Turn Background Music ON'}
+          title={musicEnabled ? t.musicOff : t.musicOn}
         >
           <Music className={`w-3.5 h-3.5 ${musicEnabled ? 'animate-pulse' : ''}`} />
           <span className="text-[10px] hidden md:inline">
-            {musicEnabled ? 'Music' : 'Music Off'}
+            {musicEnabled ? t.musicOn : t.musicOff}
           </span>
         </button>
 
@@ -101,14 +106,14 @@ export const GameHUD: React.FC<GameHUDProps> = ({
           <button
             onClick={onTogglePause}
             className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-            title={isPaused ? 'Resume game' : 'Pause game'}
+            title={isPaused ? t.resume : t.pause}
           >
             {isPaused ? <Play className="w-3.5 h-3.5 text-emerald-400" /> : <Pause className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={onRestart}
             className="p-1 rounded-md text-slate-400 hover:text-rose-300 hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Restart current puzzle"
+            title={t.restart}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -117,4 +122,3 @@ export const GameHUD: React.FC<GameHUDProps> = ({
     </div>
   );
 };
-

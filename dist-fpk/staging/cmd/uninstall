@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+echo "Uninstalling HexaGrid Sudoku..."
+if [ -f run.pid ]; then
+  kill $(cat run.pid) 2>/dev/null || true
+  rm -f run.pid
+fi
+exit 0

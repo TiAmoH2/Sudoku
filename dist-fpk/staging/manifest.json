@@ -1,0 +1,17 @@
+{
+  "package": "com.hexagrid.sudoku",
+  "version": "1.0.0",
+  "name": "hexagrid-sudoku",
+  "display_name": "HexaGrid 16×16数独",
+  "desc": "专为飞牛私有云 (fnOS) 打造的 16×16 超级数独 (Hexadoku) 益智应用，支持 1-9 & A-G、0-F、1-16 等多种符号，配备自动候选数标记、智能分步提示与舒缓背景音乐。",
+  "maintainer": "HexaGrid Team",
+  "distributor": "HexaGrid",
+  "platform": ["x86_64", "aarch64"],
+  "install_type": "app",
+  "service_port": 3000,
+  "desktop_applaunchname": "com.hexagrid.sudoku.Application",
+  "desktop_uidir": "ui",
+  "os_min_version": "1.0.0",
+  "icon": "ICON.PNG",
+  "icon_256": "ICON_256.PNG"
+}

@@ -1,16 +1,19 @@
 import React from 'react';
 import { Award, Flame, Timer, Trophy, X } from 'lucide-react';
 import { Difficulty, GameStats } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 
 interface StatsModalProps {
   isOpen: boolean;
   onClose: () => void;
   stats: GameStats;
+  language: Language;
 }
 
-export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }) => {
+export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats, language }) => {
   if (!isOpen) return null;
 
+  const t = TRANSLATIONS[language];
   const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
 
   const formatSeconds = (sec: number | null): string => {
@@ -31,7 +34,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <Trophy className="w-5 h-5 text-amber-400" />
-            <h2 className="text-lg font-bold text-white">Game Statistics</h2>
+            <h2 className="text-lg font-bold text-white">{t.statsTitle}</h2>
           </div>
           <button
             onClick={onClose}
@@ -45,14 +48,14 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
-              <span className="text-xs text-slate-400 block mb-1">Puzzles Solved</span>
+              <span className="text-xs text-slate-400 block mb-1">{t.puzzlesSolved}</span>
               <span className="text-xl font-bold font-mono text-white tabular-nums">
                 {totalWon} / {totalPlayed}
               </span>
             </div>
 
             <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
-              <span className="text-xs text-slate-400 block mb-1">Win Rate</span>
+              <span className="text-xs text-slate-400 block mb-1">{t.winRate}</span>
               <span className="text-xl font-bold font-mono text-indigo-400 tabular-nums">
                 {winRate}%
               </span>
@@ -60,10 +63,10 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
 
             <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
               <span className="text-xs text-slate-400 flex items-center justify-center gap-1 mb-1">
-                <Flame className="w-3.5 h-3.5 text-amber-400" /> Current Streak
+                <Flame className="w-3.5 h-3.5 text-amber-400" /> {t.currentStreak}
               </span>
               <span className="text-xl font-bold font-mono text-amber-400 tabular-nums">
-                {stats.streak} <span className="text-xs font-normal text-slate-500">(Best: {stats.bestStreak})</span>
+                {stats.streak} <span className="text-xs font-normal text-slate-500">({t.bestStreak}: {stats.bestStreak})</span>
               </span>
             </div>
           </div>
@@ -71,7 +74,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
           {/* Breakdown by Difficulty */}
           <div>
             <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-              Performance by Difficulty
+              {t.perfByDiff}
             </h3>
             <div className="space-y-2">
               {difficulties.map((d) => {
@@ -88,18 +91,18 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
                     <div className="flex items-center gap-2">
                       <Award className="w-4 h-4 text-indigo-400" />
                       <span className="capitalize font-semibold text-white text-sm">
-                        {d}
+                        {t[d]}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-5 font-mono text-slate-300">
                       <div>
-                        <span className="text-slate-500 font-sans mr-1">Won:</span>
+                        <span className="text-slate-500 font-sans mr-1">{language === 'zh' ? '胜局:' : 'Won:'}</span>
                         <span>{won}/{played} ({rate}%)</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Timer className="w-3.5 h-3.5 text-slate-500" />
-                        <span className="text-slate-500 font-sans mr-0.5">Best:</span>
+                        <span className="text-slate-500 font-sans mr-0.5">{t.bestTime}:</span>
                         <span className={best !== null ? 'text-emerald-400' : 'text-slate-500'}>
                           {formatSeconds(best)}
                         </span>
@@ -118,7 +121,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
             onClick={onClose}
             className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl transition-colors cursor-pointer text-xs"
           >
-            Close
+            {t.close}
           </button>
         </div>
       </div>

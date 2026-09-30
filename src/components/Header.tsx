@@ -1,6 +1,7 @@
 import React from 'react';
-import { HelpCircle, Music, Plus, Settings, Trophy, Upload, VolumeX } from 'lucide-react';
+import { Globe, HelpCircle, Music, Plus, Settings, Trophy, Upload } from 'lucide-react';
 import { Difficulty } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 
 interface HeaderProps {
   difficulty: Difficulty;
@@ -12,6 +13,8 @@ interface HeaderProps {
   onOpenCustom: () => void;
   musicEnabled: boolean;
   onToggleMusic: () => void;
+  language: Language;
+  onToggleLanguage: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,7 +27,11 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCustom,
   musicEnabled,
   onToggleMusic,
+  language,
+  onToggleLanguage,
 }) => {
+  const t = TRANSLATIONS[language];
+
   return (
     <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
@@ -39,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
           <span className="hidden sm:inline text-xs text-slate-500 tracking-wide font-medium">
-            16×16 Super Sudoku
+            {t.appSubTitle}
           </span>
         </div>
 
@@ -51,47 +58,57 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 key={d}
                 onClick={() => onSelectDifficulty(d)}
-                className={`px-2.5 py-1 rounded capitalize transition-all whitespace-nowrap ${
+                className={`px-2.5 py-1 rounded transition-all whitespace-nowrap cursor-pointer ${
                   difficulty === d
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
-                {d}
+                {t[d]}
               </button>
             ))}
           </div>
 
           <button
             onClick={onOpenCustom}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap"
-            title="Import or create a custom 16x16 puzzle"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap cursor-pointer"
+            title={t.custom}
           >
             <Upload className="w-3.5 h-3.5" />
-            <span className="hidden lg:inline">Custom</span>
+            <span className="hidden lg:inline">{t.custom}</span>
           </button>
 
           <button
             onClick={onOpenStats}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap"
-            title="View Statistics & Streaks"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap cursor-pointer"
+            title={t.stats}
           >
             <Trophy className="w-3.5 h-3.5" />
-            <span className="hidden lg:inline">Stats</span>
+            <span className="hidden lg:inline">{t.stats}</span>
           </button>
 
           <button
             onClick={onOpenRules}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap"
-            title="Rules & 16x16 Guide"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-transparent hover:border-slate-800 whitespace-nowrap cursor-pointer"
+            title={t.rules}
           >
             <HelpCircle className="w-3.5 h-3.5" />
-            <span className="hidden lg:inline">Rules</span>
+            <span className="hidden lg:inline">{t.rules}</span>
           </button>
         </nav>
 
         {/* Zone 3: Primary Actions */}
         <div className="flex items-center gap-2">
+          {/* Language Toggle */}
+          <button
+            onClick={onToggleLanguage}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-medium transition-colors cursor-pointer"
+            title="切换语言 / Switch Language"
+          >
+            <Globe className="w-3.5 h-3.5 text-slate-400" />
+            <span>{language === 'zh' ? '中' : 'EN'}</span>
+          </button>
+
           {/* Background Music Toggle Button */}
           <button
             onClick={onToggleMusic}
@@ -100,19 +117,19 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-300 hover:bg-indigo-600/30'
                 : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
             }`}
-            title={musicEnabled ? 'Turn Background Music OFF' : 'Turn Background Music ON'}
+            title={musicEnabled ? t.musicOff : t.musicOn}
             aria-label="Toggle Background Music"
           >
             <Music className={`w-3.5 h-3.5 ${musicEnabled ? 'text-indigo-400 animate-pulse' : ''}`} />
             <span className="hidden sm:inline">
-              {musicEnabled ? 'Music ON' : 'Music OFF'}
+              {musicEnabled ? t.musicOn : t.musicOff}
             </span>
           </button>
 
           <button
             onClick={onOpenSettings}
             className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors cursor-pointer"
-            title="Settings & Symbol Set"
+            title={t.settings}
             aria-label="Settings"
           >
             <Settings className="w-4 h-4" />
@@ -123,11 +140,10 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 rounded-lg transition-colors shadow-sm shadow-indigo-600/30 whitespace-nowrap cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>New Game</span>
+            <span>{t.newGame}</span>
           </button>
         </div>
       </div>
     </header>
   );
 };
-

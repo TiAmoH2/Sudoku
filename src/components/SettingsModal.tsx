@@ -1,6 +1,7 @@
 import React from 'react';
-import { Check, Music, Settings as SettingsIcon, Volume2, VolumeX, X } from 'lucide-react';
+import { Check, Globe, Music, Settings as SettingsIcon, Volume2, VolumeX, X } from 'lucide-react';
 import { GameSettings, SymbolSetId } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 import { SYMBOL_CONFIGS } from '../utils/symbols';
 
 interface SettingsModalProps {
@@ -18,6 +19,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const t = TRANSLATIONS[settings.language];
   const symbolSets: SymbolSetId[] = ['alpha', 'hex', 'numbers', 'letters'];
 
   return (
@@ -27,7 +29,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <SettingsIcon className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white">Game Settings</h2>
+            <h2 className="text-lg font-bold text-white">{t.gameSettings}</h2>
           </div>
           <button
             onClick={onClose}
@@ -39,10 +41,48 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Content */}
         <div className="p-6 space-y-6 overflow-y-auto text-sm">
+          {/* Language Selection */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              {t.interfaceLang}
+            </label>
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                onClick={() => onUpdateSettings({ language: 'zh' })}
+                className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                  settings.language === 'zh'
+                    ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-sm ring-1 ring-indigo-500'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-indigo-400" />
+                  <span className="font-semibold text-xs">简体中文 (fnOS 默认)</span>
+                </div>
+                {settings.language === 'zh' && <Check className="w-4 h-4 text-indigo-400" />}
+              </button>
+
+              <button
+                onClick={() => onUpdateSettings({ language: 'en' })}
+                className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                  settings.language === 'en'
+                    ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-sm ring-1 ring-indigo-500'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-indigo-400" />
+                  <span className="font-semibold text-xs">English</span>
+                </div>
+                {settings.language === 'en' && <Check className="w-4 h-4 text-indigo-400" />}
+              </button>
+            </div>
+          </div>
+
           {/* Symbol Sets */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Symbol Notation
+              {t.symbolNotation}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {symbolSets.map((id) => {
@@ -72,10 +112,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Gameplay Assistance Toggles */}
+          {/* Audio & Background Music */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
-              Audio & Soundscapes
+              {t.audioAndMusic}
             </label>
             <div className="space-y-3">
               {/* Background Music Toggle */}
@@ -84,8 +124,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div className="flex items-center gap-3">
                     <Music className={`w-4 h-4 ${settings.musicEnabled ? 'text-indigo-400 animate-pulse' : 'text-slate-500'}`} />
                     <div>
-                      <div className="font-medium text-white text-xs">Background Music (背景音乐)</div>
-                      <div className="text-[11px] text-slate-400">Warm procedural ambient lofi/zen soundscape for focus</div>
+                      <div className="font-medium text-white text-xs">{t.bgMusic}</div>
+                      <div className="text-[11px] text-slate-400">{t.bgMusicDesc}</div>
                     </div>
                   </div>
                   <input
@@ -98,7 +138,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                 {settings.musicEnabled && (
                   <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-4 text-xs">
-                    <span className="text-slate-400 text-[11px]">Music Volume</span>
+                    <span className="text-slate-400 text-[11px]">{t.musicVolume}</span>
                     <div className="flex items-center gap-3 flex-1 max-w-[200px]">
                       <input
                         type="range"
@@ -128,8 +168,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <VolumeX className="w-4 h-4 text-slate-500" />
                   )}
                   <div>
-                    <div className="font-medium text-white text-xs">Sound Effects (音效)</div>
-                    <div className="text-[11px] text-slate-400">Soft audio chimes on moves, hints, and victory</div>
+                    <div className="font-medium text-white text-xs">{t.soundFx}</div>
+                    <div className="text-[11px] text-slate-400">{t.soundFxDesc}</div>
                   </div>
                 </div>
                 <input
@@ -142,17 +182,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
+          {/* Board Preferences */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
-              Board & Gameplay Preferences
+              {t.boardAssist}
             </label>
             <div className="space-y-3">
-
               {/* Highlight Matching Numbers */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div>
-                  <div className="font-medium text-white text-xs">Highlight Matching Numbers</div>
-                  <div className="text-[11px] text-slate-400">Highlights all cells sharing the selected number</div>
+                  <div className="font-medium text-white text-xs">{t.highlightMatching}</div>
+                  <div className="text-[11px] text-slate-400">{t.highlightMatchingDesc}</div>
                 </div>
                 <input
                   type="checkbox"
@@ -167,8 +207,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Highlight Row / Col / Box Peers */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div>
-                  <div className="font-medium text-white text-xs">Highlight Row, Column & Block</div>
-                  <div className="text-[11px] text-slate-400">Subtly tints peer cells in active row, column, and 4×4 box</div>
+                  <div className="font-medium text-white text-xs">{t.highlightPeers}</div>
+                  <div className="text-[11px] text-slate-400">{t.highlightPeersDesc}</div>
                 </div>
                 <input
                   type="checkbox"
@@ -181,8 +221,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Highlight Duplicate Conflicts */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div>
-                  <div className="font-medium text-white text-xs">Conflict Checking</div>
-                  <div className="text-[11px] text-slate-400">Highlight duplicate numbers that violate Sudoku rules</div>
+                  <div className="font-medium text-white text-xs">{t.conflictCheck}</div>
+                  <div className="text-[11px] text-slate-400">{t.conflictCheckDesc}</div>
                 </div>
                 <input
                   type="checkbox"
@@ -195,8 +235,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Auto-Remove Notes */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div>
-                  <div className="font-medium text-white text-xs">Auto-Remove Notes</div>
-                  <div className="text-[11px] text-slate-400">Automatically clear notes from peer cells when placing a number</div>
+                  <div className="font-medium text-white text-xs">{t.autoRemoveNotes}</div>
+                  <div className="text-[11px] text-slate-400">{t.autoRemoveNotesDesc}</div>
                 </div>
                 <input
                   type="checkbox"
@@ -209,8 +249,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* 4x4 Block Shading */}
               <div className="flex items-center justify-between p-3 bg-slate-950/50 border border-slate-800 rounded-xl">
                 <div>
-                  <div className="font-medium text-white text-xs">Subtle 4×4 Block Shading</div>
-                  <div className="text-[11px] text-slate-400">Alternating subtle background tint on 4×4 blocks</div>
+                  <div className="font-medium text-white text-xs">{t.blockShading}</div>
+                  <div className="text-[11px] text-slate-400">{t.blockShadingDesc}</div>
                 </div>
                 <input
                   type="checkbox"
@@ -229,7 +269,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={onClose}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-colors cursor-pointer text-xs"
           >
-            Done
+            {t.done}
           </button>
         </div>
       </div>

@@ -5,6 +5,7 @@ const SETTINGS_KEY = 'hexagrid_settings_v1';
 const GAME_STATE_KEY = 'hexagrid_current_game_v1';
 
 export const DEFAULT_SETTINGS: GameSettings = {
+  language: 'zh',
   symbolSet: 'alpha',
   soundEnabled: true,
   musicEnabled: false,

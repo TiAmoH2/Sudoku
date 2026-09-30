@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, Lightbulb, X } from 'lucide-react';
 import { HintDetails, SymbolSetId } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 import { getSymbol } from '../utils/symbols';
 
 interface HintToastProps {
@@ -8,6 +9,7 @@ interface HintToastProps {
   symbolSet: SymbolSetId;
   onApplyHint: () => void;
   onDismiss: () => void;
+  language: Language;
 }
 
 export const HintToast: React.FC<HintToastProps> = ({
@@ -15,9 +17,11 @@ export const HintToast: React.FC<HintToastProps> = ({
   symbolSet,
   onApplyHint,
   onDismiss,
+  language,
 }) => {
   if (!hint) return null;
 
+  const t = TRANSLATIONS[language];
   const symbolChar = getSymbol(hint.value, symbolSet);
 
   return (
@@ -31,7 +35,7 @@ export const HintToast: React.FC<HintToastProps> = ({
             <div className="font-semibold text-white flex items-center gap-2">
               <span>{hint.title}</span>
               <span className="font-mono px-1.5 py-0.2 bg-amber-500/20 text-amber-300 rounded text-[11px]">
-                Value: {symbolChar}
+                {language === 'zh' ? '推荐数值' : 'Value'}: {symbolChar}
               </span>
             </div>
             <p className="text-slate-300 mt-1 leading-relaxed">
@@ -53,14 +57,16 @@ export const HintToast: React.FC<HintToastProps> = ({
           onClick={onDismiss}
           className="px-3 py-1 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
         >
-          I'll solve it
+          {t.illSolve}
         </button>
         <button
           onClick={onApplyHint}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-semibold rounded-lg transition-colors cursor-pointer shadow-sm"
         >
           <Check className="w-3.5 h-3.5" />
-          <span>Apply {symbolChar} to Row {hint.row + 1}, Col {hint.col + 1}</span>
+          <span>
+            {t.applyHint} {symbolChar} → {language === 'zh' ? `第 ${hint.row + 1} 行，第 ${hint.col + 1} 列` : `Row ${hint.row + 1}, Col ${hint.col + 1}`}
+          </span>
         </button>
       </div>
     </div>

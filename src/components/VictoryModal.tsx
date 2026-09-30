@@ -1,6 +1,7 @@
 import React from 'react';
-import { Award, Clock, Play, RotateCcw, Trophy } from 'lucide-react';
+import { Award, Clock, Play, Trophy } from 'lucide-react';
 import { Difficulty } from '../types/sudoku';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 
 interface VictoryModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface VictoryModalProps {
   hintsUsed: number;
   mistakes: number;
   isBestTime: boolean;
+  language: Language;
 }
 
 export const VictoryModal: React.FC<VictoryModalProps> = ({
@@ -22,8 +24,11 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   hintsUsed,
   mistakes,
   isBestTime,
+  language,
 }) => {
   if (!isOpen) return null;
+
+  const t = TRANSLATIONS[language];
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -46,46 +51,46 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         </div>
 
         <h2 className="text-2xl font-bold tracking-tight text-white mb-1 font-sans">
-          Puzzle Solved!
+          {t.puzzleSolved}
         </h2>
         <p className="text-sm text-slate-400 mb-6">
-          Congratulations on mastering this 16×16 Super Sudoku grid!
+          {t.victoryDesc}
         </p>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center">
             <span className="text-xs text-slate-400 mb-1 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-indigo-400" /> Time
+              <Clock className="w-3.5 h-3.5 text-indigo-400" /> {t.timeSpent}
             </span>
             <span className="text-lg font-bold font-mono text-white tabular-nums">
               {formatTime(timeSeconds)}
             </span>
             {isBestTime && (
               <span className="text-[10px] text-amber-400 font-semibold mt-0.5">
-                New Record!
+                {t.newRecord}
               </span>
             )}
           </div>
 
           <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center">
             <span className="text-xs text-slate-400 mb-1 flex items-center gap-1">
-              <Award className="w-3.5 h-3.5 text-indigo-400" /> Difficulty
+              <Award className="w-3.5 h-3.5 text-indigo-400" /> {t.difficulty}
             </span>
             <span className="text-lg font-bold capitalize text-white">
-              {difficulty}
+              {t[difficulty]}
             </span>
           </div>
 
           <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center">
-            <span className="text-xs text-slate-400 mb-1">Mistakes</span>
+            <span className="text-xs text-slate-400 mb-1">{t.mistakes}</span>
             <span className="text-lg font-bold font-mono text-white">
               {mistakes}
             </span>
           </div>
 
           <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center">
-            <span className="text-xs text-slate-400 mb-1">Hints Used</span>
+            <span className="text-xs text-slate-400 mb-1">{t.hintsUsed}</span>
             <span className="text-lg font-bold font-mono text-white">
               {hintsUsed}
             </span>
@@ -99,7 +104,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold rounded-xl transition-colors cursor-pointer shadow-md shadow-indigo-600/30"
           >
             <Play className="w-4 h-4" />
-            <span>Play Next Puzzle ({difficulty})</span>
+            <span>{t.playNext} ({t[difficulty]})</span>
           </button>
 
           <div className="flex gap-2 pt-2">
@@ -107,13 +112,13 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
               <button
                 key={d}
                 onClick={() => onPlayAgain(d)}
-                className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-lg border transition-colors capitalize ${
+                className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-lg border transition-colors capitalize cursor-pointer ${
                   d === difficulty
                     ? 'bg-slate-800 border-indigo-500/50 text-indigo-300'
                     : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                {d}
+                {t[d]}
               </button>
             ))}
           </div>

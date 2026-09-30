@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+PORT=${FN_APP_PORT:-3000}
+export PORT
+APP_DIR=${FN_APP_DIR:-$(pwd)}
+cd "$APP_DIR"
+
+if [ -f run.pid ] && kill -0 $(cat run.pid) 2>/dev/null; then
+  echo "Service is already running with PID $(cat run.pid)"
+  exit 0
+fi
+
+nohup npx tsx server.ts > app.log 2>&1 &
+echo $! > run.pid
+echo "HexaGrid Sudoku service started on port $PORT (PID: $(cat run.pid))"
+exit 0

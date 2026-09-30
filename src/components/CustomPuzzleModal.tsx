@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Check, Copy, Download, Upload, X } from 'lucide-react';
+import { Check, Copy, Upload, X } from 'lucide-react';
 import { Grid, SymbolSetId } from '../types/sudoku';
-import { getSymbol, parseKeyToValue } from '../utils/symbols';
+import { Language, TRANSLATIONS } from '../utils/i18n';
 import { GRID_SIZE, TOTAL_CELLS } from '../utils/sudokuEngine';
+import { getSymbol, parseKeyToValue } from '../utils/symbols';
 
 interface CustomPuzzleModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface CustomPuzzleModalProps {
   currentGrid: Grid;
   symbolSet: SymbolSetId;
   onLoadCustomPuzzle: (gridValues: number[][]) => void;
+  language: Language;
 }
 
 export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
@@ -18,12 +20,15 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
   currentGrid,
   symbolSet,
   onLoadCustomPuzzle,
+  language,
 }) => {
   const [inputText, setInputText] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
+
+  const t = TRANSLATIONS[language];
 
   // Generate string representation of current puzzle
   const exportPuzzleString = (): string => {
@@ -54,7 +59,9 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
 
     if (cleaned.length !== TOTAL_CELLS) {
       setErrorMessage(
-        `Invalid puzzle length: found ${cleaned.length} characters, but exactly 256 are required for 16×16.`
+        language === 'zh'
+          ? `字符长度错误：当前为 ${cleaned.length} 个字符，16×16 数独必须精确为 256 个字符。`
+          : `Invalid puzzle length: found ${cleaned.length} characters, but exactly 256 are required.`
       );
       return;
     }
@@ -74,7 +81,9 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
         const val = parseKeyToValue(char, symbolSet);
         if (val === null) {
           setErrorMessage(
-            `Unrecognized character '${char}' at index ${i + 1}. Please use valid symbols for the current notation.`
+            language === 'zh'
+              ? `第 ${i + 1} 位字符 '${char}' 无法识别，请使用当前符号系统允许的有效字符。`
+              : `Unrecognized character '${char}' at index ${i + 1}. Please use valid symbols.`
           );
           return;
         }
@@ -93,7 +102,7 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <Upload className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white">Import & Export Puzzle</h2>
+            <h2 className="text-lg font-bold text-white">{t.importExport}</h2>
           </div>
           <button
             onClick={onClose}
@@ -109,7 +118,7 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="font-semibold text-slate-200 uppercase tracking-wider">
-                Export Current Board
+                {t.exportTitle}
               </span>
               <button
                 onClick={handleCopy}
@@ -118,12 +127,12 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
                 {copied ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Copied!</span>
+                    <span>{t.copied}</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5" />
-                    <span>Copy to Clipboard</span>
+                    <span>{t.copyClipboard}</span>
                   </>
                 )}
               </button>
@@ -139,16 +148,16 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
           {/* Import Section */}
           <div>
             <label className="block font-semibold text-slate-200 uppercase tracking-wider mb-2">
-              Import 16×16 Puzzle String
+              {t.importTitle}
             </label>
             <p className="text-slate-400 mb-2">
-              Paste 256 characters (use dots <code className="font-mono text-indigo-300">.</code> or zeros <code className="font-mono text-indigo-300">0</code> for empty cells, separated by newlines or continuous):
+              {t.importDesc}
             </p>
             <textarea
               rows={6}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste 256 characters (16 rows of 16 characters)..."
+              placeholder={t.importPlaceholder}
               className="w-full p-2.5 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl font-mono text-[11px] text-white resize-none focus:outline-none"
             />
             {errorMessage && (
@@ -163,14 +172,14 @@ export const CustomPuzzleModal: React.FC<CustomPuzzleModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition-colors cursor-pointer"
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             onClick={handleImport}
             disabled={!inputText.trim()}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors cursor-pointer"
           >
-            Load & Play
+            {t.loadAndPlay}
           </button>
         </div>
       </div>

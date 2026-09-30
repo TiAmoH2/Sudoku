@@ -54,6 +54,7 @@ export interface GameStats {
 }
 
 export interface GameSettings {
+  language: 'zh' | 'en';
   symbolSet: SymbolSetId;
   soundEnabled: boolean;
   musicEnabled: boolean;

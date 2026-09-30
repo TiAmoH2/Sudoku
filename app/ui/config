@@ -1,0 +1,13 @@
+{
+  "com.hexagrid.sudoku.Application": {
+    "type": "app",
+    "title": "HexaGrid 16×16数独",
+    "desc": "16×16 超级数独与益智解题",
+    "icon": "ICON.PNG",
+    "icon_256": "ICON_256.PNG",
+    "protocol": "http",
+    "port": 3000,
+    "url": "/",
+    "allUsers": true
+  }
+}

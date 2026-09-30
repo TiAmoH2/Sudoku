@@ -14,16 +14,10 @@ import { SettingsModal } from './components/SettingsModal';
 import { StatsModal } from './components/StatsModal';
 import { SudokuGrid } from './components/SudokuGrid';
 import { VictoryModal } from './components/VictoryModal';
-import {
-  Difficulty,
-  GameSettings,
-  GameStats,
-  Grid,
-  HintDetails,
-  HistoryItem,
-} from './types/sudoku';
+import { Difficulty, GameSettings, GameStats, Grid, HintDetails, HistoryItem } from './types/sudoku';
 import { sound } from './utils/audio';
 import { backgroundMusic } from './utils/backgroundMusic';
+import { TRANSLATIONS } from './utils/i18n';
 import {
   loadSavedGame,
   loadSettings,
@@ -237,6 +231,18 @@ export default function App() {
       return updated;
     });
   }, []);
+
+  // Toggle Language
+  const handleToggleLanguage = useCallback(() => {
+    setSettings((prev) => {
+      const nextLang: 'zh' | 'en' = prev.language === 'zh' ? 'en' : 'zh';
+      const updated: GameSettings = { ...prev, language: nextLang };
+      saveSettings(updated);
+      return updated;
+    });
+  }, []);
+
+  const t = TRANSLATIONS[settings.language];
 
   // Perform a cell modification (Value placement or Note toggle)
   const applyCellChange = useCallback(
@@ -624,6 +630,8 @@ export default function App() {
         onOpenCustom={() => setIsCustomModalOpen(true)}
         musicEnabled={settings.musicEnabled}
         onToggleMusic={handleToggleMusic}
+        language={settings.language}
+        onToggleLanguage={handleToggleLanguage}
       />
 
       {/* Main Arena Content */}
@@ -640,6 +648,7 @@ export default function App() {
           totalCells={TOTAL_CELLS}
           musicEnabled={settings.musicEnabled}
           onToggleMusic={handleToggleMusic}
+          language={settings.language}
         />
 
         {/* Playfield Area: Grid + Keypad Sidebar */}
@@ -650,15 +659,15 @@ export default function App() {
               {/* Pause Overlay */}
               {isPaused && (
                 <div className="absolute inset-0 z-30 bg-slate-950/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 border border-slate-800 text-center animate-in fade-in duration-150">
-                  <h3 className="text-xl font-bold text-white mb-2">Game Paused</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{t.gamePaused}</h3>
                   <p className="text-sm text-slate-400 mb-4 max-w-xs">
-                    The timer is stopped and puzzle numbers are hidden.
+                    {t.gamePausedDesc}
                   </p>
                   <button
                     onClick={() => setIsPaused(false)}
                     className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-colors cursor-pointer shadow-lg shadow-indigo-600/30 text-xs"
                   >
-                    Resume Game
+                    {t.resumeGame}
                   </button>
                 </div>
               )}
@@ -685,6 +694,7 @@ export default function App() {
                   symbolSet={settings.symbolSet}
                   onApplyHint={handleApplyHint}
                   onDismiss={() => setActiveHint(null)}
+                  language={settings.language}
                 />
               </div>
             )}
@@ -709,20 +719,17 @@ export default function App() {
               onClearAllNotes={handleClearAllNotes}
               numberFirstMode={numberFirstMode}
               onToggleNumberFirstMode={() => setNumberFirstMode((prev) => !prev)}
+              language={settings.language}
             />
 
             {/* Quick Keyboard Reference Callout */}
             <div className="hidden sm:block p-3.5 bg-slate-900/60 rounded-2xl border border-slate-800 text-xs text-slate-400">
               <div className="font-semibold text-slate-300 mb-1 flex items-center justify-between">
-                <span>Keyboard Controls</span>
-                <span className="text-[10px] text-indigo-400 font-mono">16x16 Enabled</span>
+                <span>{t.keyboardGuide}</span>
+                <span className="text-[10px] text-indigo-400 font-mono">{t.keyboardBadge}</span>
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                Use <kbd className="px-1 py-0.5 bg-slate-800 rounded font-mono text-slate-200">1-9</kbd> and{' '}
-                <kbd className="px-1 py-0.5 bg-slate-800 rounded font-mono text-slate-200">A-G</kbd> to enter
-                symbols, <kbd className="px-1 py-0.5 bg-slate-800 rounded font-mono text-slate-200">Arrows</kbd> to move,{' '}
-                <kbd className="px-1 py-0.5 bg-slate-800 rounded font-mono text-slate-200">N</kbd> for notes, and{' '}
-                <kbd className="px-1 py-0.5 bg-slate-800 rounded font-mono text-slate-200">Backspace</kbd> to erase.
+                {t.keyboardDesc}
               </p>
             </div>
           </div>
@@ -739,17 +746,20 @@ export default function App() {
         hintsUsed={hintsUsed}
         mistakes={mistakes}
         isBestTime={isNewRecord}
+        language={settings.language}
       />
 
       <RulesModal
         isOpen={isRulesModalOpen}
         onClose={() => setIsRulesModalOpen(false)}
+        language={settings.language}
       />
 
       <StatsModal
         isOpen={isStatsModalOpen}
         onClose={() => setIsStatsModalOpen(false)}
         stats={stats}
+        language={settings.language}
       />
 
       <SettingsModal
@@ -765,6 +775,7 @@ export default function App() {
         currentGrid={grid}
         symbolSet={settings.symbolSet}
         onLoadCustomPuzzle={handleLoadCustomPuzzle}
+        language={settings.language}
       />
     </div>
   );

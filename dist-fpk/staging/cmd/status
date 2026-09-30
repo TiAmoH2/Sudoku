@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ -f run.pid ]; then
+  PID=$(cat run.pid)
+  if kill -0 "$PID" 2>/dev/null; then
+    echo "Service is running (PID: $PID)"
+    exit 0
+  fi
+fi
+echo "Service is stopped"
+exit 1
